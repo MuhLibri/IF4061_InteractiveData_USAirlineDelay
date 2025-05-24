@@ -2,34 +2,40 @@ import streamlit as st
 import plotly.express as px
 import time
 
-def average_carrier_delay(df):
-    ## Graph 4: Daftar rata-rata keterlambatan penerbangan per maskapai
-    # Compute average delay by carrier
-    carrier_avg_delay = df.groupby('carrier_name')['arr_del15_percentage'].mean().sort_values()
-
-    # Radiobutton options
-    st.markdown("<h2 style='font-size: 24px;'>List of Average Flight Delays by Airline</h2>", unsafe_allow_html=True)    
-    option = st.radio(
-        "View Options:",
-        ["Show All", "Top 5 Carriers with Highest Delay", "Top 5 Carriers with Lowest Delay", ]
+@st.cache_data(show_spinner=False)
+def compute_carrier_avg_delay(df):
+    return (
+        df.groupby('carrier_name')['arr_del15_percentage']
+        .mean()
+        .sort_values()
     )
 
-    # Chart container
-    chart_placeholder = st.empty()
+def average_carrier_delay(df):
+    st.markdown("<h2 style='font-size: 24px;'>List of Average Flight Delays by Airline</h2>", unsafe_allow_html=True)
 
-    # Filter data
+    # Compute and cache average delay per carrier
+    carrier_avg_delay = compute_carrier_avg_delay(df)
+
+    # User option
+    option = st.radio(
+        "View Options:",
+        ["Show All", "Top 5 Carriers with Highest Delay", "Top 5 Carriers with Lowest Delay"],
+        horizontal=True,
+        key="carrier_delay_option"
+    )
+
+    # Determine filtered subset based on selected option
     if option == "Show All":
         selected_data = carrier_avg_delay.sort_values(ascending=False)
     elif option == "Top 5 Carriers with Highest Delay":
         selected_data = carrier_avg_delay.tail(5).sort_values(ascending=False)
-    elif option == "Top 5 Carriers with Lowest Delay":
+    else:  # "Top 5 Carriers with Lowest Delay"
         selected_data = carrier_avg_delay.head(5)
 
-    # Build Plotly DataFrame
     df_plot = selected_data.reset_index()
     df_plot.columns = ['Carrier', 'AvgDelayPercent']
 
-    # Create Plotly bar chart
+    # Plot
     fig = px.bar(
         df_plot,
         x='Carrier',
@@ -59,8 +65,5 @@ def average_carrier_delay(df):
         transition_duration=500
     )
 
-    # Optional tiny delay to simulate smooth update
-    time.sleep(0.1)
-
-    # Show chart in placeholder
-    chart_placeholder.plotly_chart(fig, use_container_width=True)
+    # Render
+    st.plotly_chart(fig, use_container_width=True)
