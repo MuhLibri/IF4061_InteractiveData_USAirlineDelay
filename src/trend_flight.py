@@ -52,7 +52,7 @@ def trend_flight(df):
         total_delay['hover_delay'] = total_delay['total_delay'].apply(format_with_dots)
 
         # Add dummy column for legend
-        total_delay['Jenis'] = 'Total Delay'
+        total_delay['Type'] = 'Total Delay'
 
         # Compute additional insights
         max_row = total_delay.loc[total_delay['total_delay'].idxmax()]
@@ -74,7 +74,7 @@ def trend_flight(df):
         
         # Display metrics in columns
         col1, col2, col3 = st.columns(3)
-        col1.metric("Year with Highest Delay", f"{max_year}", f"{max_value:,.0f} total delay")
+        col1.metric("Year with Highest Flights Delay", f"{max_year}", f"{max_value:,.0f} total flights delay")
         col2.metric("Biggest Increase", f"{gain_year}", f"{gain_pct:.2f}%")
         col3.metric("Biggest Decrease", f"{drop_year}", f"{drop_pct:.2f}%")
 
@@ -83,19 +83,19 @@ def trend_flight(df):
             total_delay,
             x='airline_year',
             y='total_delay',
-            color='Jenis',
+            color='Type',
             markers=True,
-            hover_data={'hover_delay': True, 'total_delay': False, 'Jenis': False}
+            hover_data={'hover_delay': True, 'total_delay': False, 'Type': False}
         )
 
         # Custom hover template: show year and formatted delay only
         fig.update_traces(
-            hovertemplate='Year = %{x}<br>Total Delay = %{customdata[0]} flight<extra></extra>'
+            hovertemplate='Year = %{x}<br>Total Delay = %{customdata[0]} flights<extra></extra>'
         )
 
         fig.update_layout(
             xaxis_title="Year",
-            yaxis_title="Total Delay",
+            yaxis_title="Total Flights Delay",
             margin=dict(t=20, b=40, l=40, r=20),
             showlegend=True,
         )
@@ -160,13 +160,13 @@ def trend_flight(df):
             hovertemplate=(
                 'Cause = %{customdata[0]}<br>'
                 'Year = %{x}<br>'
-                'Total Delay = %{customdata[1]} flight<extra></extra>'
+                'Total Delay = %{customdata[1]} flights<extra></extra>'
             )
         )
 
         fig.update_layout(
             xaxis_title="Year",
-            yaxis_title="Total Delay",
+            yaxis_title="Total Flights Delay",
             margin=dict(t=0, b=40, l=40, r=20)
         )
 
