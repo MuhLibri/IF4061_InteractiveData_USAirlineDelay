@@ -74,7 +74,7 @@ def trend_flight_month(df):
             xaxis_title="Month",
             yaxis_title="Total Flights Delay",
             margin=dict(t=20, b=40, l=40, r=20),
-            showlegend=False
+            showlegend=True
         )
 
         st.plotly_chart(fig, use_container_width=True)
