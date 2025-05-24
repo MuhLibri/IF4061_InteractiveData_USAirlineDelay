@@ -9,3 +9,9 @@ def get_airline_year(row):
 def format_with_dots(val):
     s = f"{val:,.0f}"
     return s.replace(',', '.')
+
+# Function to get the two-month span for metrics display
+def get_two_month_span(idx, total_delay):
+    if idx > 0:
+        return f"{total_delay.loc[idx-1, 'month']}–{total_delay.loc[idx, 'month']}"
+    return total_delay.loc[idx, 'month']  # Fallback for the first row

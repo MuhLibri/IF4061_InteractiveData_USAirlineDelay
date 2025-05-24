@@ -5,7 +5,7 @@ from src.utils import format_with_dots, get_airline_year
 
 ## Graph 1: Tren Penyebab Keterlambatan Penerbangan per Tahun
 
-def trend_flight(df):
+def trend_flight_year(df):
     # === Chart Title ===
     st.markdown("<h2 style='font-size: 24px;'>Trend of Flight Delay Causes by Year</h2>", unsafe_allow_html=True)
     
@@ -42,7 +42,8 @@ def trend_flight(df):
     plot_type = st.radio(
         "Choose Visualization Type:",
         ["Total Delay", "Total Delay by Cause"],
-        horizontal=True
+        horizontal=True,
+        key="plot_type_radio_year"
     )
 
 

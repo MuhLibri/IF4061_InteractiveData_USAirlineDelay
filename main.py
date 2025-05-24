@@ -4,7 +4,8 @@ import pandas as pd
 import time
 import warnings
 
-from src.trend_flight import trend_flight
+from src.trend_flight_year import trend_flight_year
+from src.trend_flight_month import trend_flight_month
 warnings.filterwarnings('ignore')
 
 # Set page config
@@ -34,11 +35,20 @@ st.write("")
 
 # -----------------------------------------------------------------------------------------------------
 ## Graph 1: Tren Penyebab Keterlambatan Penerbangan per Tahun
-trend_flight = trend_flight(df)
+trend_flight_year(df)
 # -----------------------------------------------------------------------------------------------------
 
 st.write("")
 st.write("")
+
+# -----------------------------------------------------------------------------------------------------
+## Graph 2: Tren Penyebab Keterlambatan Penerbangan per Bulan
+trend_flight_month(df)
+# -----------------------------------------------------------------------------------------------------
+
+st.write("")
+st.write("")
+
 
 ## Graph 2: Daftar rata-rata keterlambatan penerbangan per maskapai
 # Compute average delay by carrier
