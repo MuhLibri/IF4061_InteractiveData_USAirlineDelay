@@ -57,7 +57,7 @@ def trend_flight_month(df):
 
         col1, col2, col3, col4 = st.columns(4)
         col1.metric("Peak Delay Month", max_row['month'], f"{max_row['total_delay']:,.0f} delays")
-        col2.metric("Least Delay Month", min_row['month'], f"{min_row['total_delay']:,.0f} delays")
+        col2.metric("Least Delay Month", min_row['month'], f"{min_row['total_delay']:,.0f} delays","inverse")
         col3.metric("Highest Increase", gain_month, f"{total_delay.loc[gain_idx, 'pct_change']:.2f}%")
         col4.metric("Highest Decrease", loss_month, f"{total_delay.loc[loss_idx, 'pct_change']:.2f}%")
 
@@ -68,10 +68,13 @@ def trend_flight_month(df):
             y='total_delay',
             color='Type',
             markers=True,
-            hover_data={'hover_delay': True, 'total_delay': False, 'Type': False}
+            hover_data={'hover_delay': True, 'total_delay': False, 'Type': False},
+            height=350
         )
         fig.update_traces(
-            hovertemplate='Month = %{x}<br>Total Delay = %{customdata[0]} flights<extra></extra>'
+            hovertemplate=
+                'Month: <b>%{x}</b><br>'
+                'Total Delay: <b>%{customdata[0]} flights</b><extra></extra>'
         )
         fig.update_layout(
             xaxis_title="Month",
@@ -119,10 +122,14 @@ def trend_flight_month(df):
             color='Cause',
             markers=True,
             color_discrete_map=color_map,
-            custom_data=['Cause', 'Total_Delay_Formatted']
+            custom_data=['Cause', 'Total_Delay_Formatted'],
+            height=350
         )
         fig.update_traces(
-            hovertemplate='Cause = %{customdata[0]}<br>Month = %{x}<br>Total Delay = %{customdata[1]} flights<extra></extra>'
+            hovertemplate=
+                'Cause: <b>%{customdata[0]}</b><br>'
+                'Month: <b>%{x}</b><br>'
+                'Total Delay: <b>%{customdata[1]} flights</b><extra></extra>'
         )
         fig.update_layout(
             xaxis_title="Month",

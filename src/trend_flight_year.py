@@ -60,10 +60,13 @@ def trend_flight_year(df):
             y='total_delay',
             color='Type',
             markers=True,
-            hover_data={'hover_delay': True, 'total_delay': False, 'Type': False}
+            hover_data={'hover_delay': True, 'total_delay': False, 'Type': False},
+            height=350
         )
         fig.update_traces(
-            hovertemplate='Year = %{x}<br>Total Delay = %{customdata[0]} flights<extra></extra>'
+            hovertemplate=
+                'Year: <b>%{x}</b><br>'
+                'Total Delay: <b>%{customdata[0]} flights<extra></extra></b>'
         )
         fig.update_layout(
             xaxis_title="Year",
@@ -117,13 +120,15 @@ def trend_flight_year(df):
             color='Cause',
             markers=True,
             color_discrete_map=color_map,
-            custom_data=['Cause', 'Total_Delay_Formatted']
+            custom_data=['Cause', 'Total_Delay_Formatted'],
+            height=350
         )
+        
         fig.update_traces(
             hovertemplate=(
-                'Cause = %{customdata[0]}<br>'
-                'Year = %{x}<br>'
-                'Total Delay = %{customdata[1]} flights<extra></extra>'
+                'Cause: <b>%{customdata[0]}</b><br>'
+                'Year: <b>%{x}</b><br>'
+                'Total Delay: <b>%{customdata[1]} flights</b><extra></extra>'
             )
         )
         fig.update_layout(

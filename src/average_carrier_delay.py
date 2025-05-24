@@ -1,6 +1,5 @@
 import streamlit as st
 import plotly.express as px
-import time
 
 @st.cache_data(show_spinner=False)
 def compute_carrier_avg_delay(df):
@@ -18,7 +17,7 @@ def average_carrier_delay(df):
 
     # User option
     option = st.radio(
-        "View Options:",
+        "Choose Display Option:",
         ["Show All", "Top 5 Carriers with Highest Delay", "Top 5 Carriers with Lowest Delay"],
         horizontal=True,
         key="carrier_delay_option"
@@ -27,6 +26,13 @@ def average_carrier_delay(df):
     # Determine filtered subset based on selected option
     if option == "Show All":
         selected_data = carrier_avg_delay.sort_values(ascending=False)
+
+        # Compute overall average
+        overall_avg = carrier_avg_delay.mean()
+
+        # Display metric
+        st.metric(label="Overall Average Delay", value=f"{overall_avg:.2f}%")
+
     elif option == "Top 5 Carriers with Highest Delay":
         selected_data = carrier_avg_delay.tail(5).sort_values(ascending=False)
     else:  # "Top 5 Carriers with Lowest Delay"
@@ -45,7 +51,7 @@ def average_carrier_delay(df):
         color='AvgDelayPercent',
         color_continuous_scale='Blues',
         template='plotly_white',
-        height=500
+        height=450
     )
 
     fig.update_traces(
@@ -53,17 +59,14 @@ def average_carrier_delay(df):
         textposition='outside',
         marker_line_color='darkgray',
         marker_line_width=1.5,
-        hovertemplate='<b>%{x}</b><br>Delay Percentage: %{y:.2f}%<extra></extra>'
+        hovertemplate='<b>%{x}</b><br>Delay Percentage: <b>%{y:.2f}%</b><extra></extra>'
     )
 
     fig.update_layout(
-        xaxis_tickangle=-30,
         yaxis_range=[0, df_plot['AvgDelayPercent'].max() * 1.2],
         font=dict(family="Segoe UI", size=14),
         plot_bgcolor='rgba(0,0,0,0)',
         margin=dict(t=0, b=40, l=40, r=20),
-        transition_duration=500
     )
 
-    # Render
     st.plotly_chart(fig, use_container_width=True)
