@@ -25,41 +25,55 @@ def compute_delay_sums(df):
 
     return yearly_totals, label_map
 
+
 def delay_cause_proportion(df):
     st.markdown(
         "<h2 style='font-size: 24px;'>Proportion of Delay Causes</h2>",
         unsafe_allow_html=True
     )
 
-    # Get cached values
-    yearly_totals, label_map = compute_delay_sums(df)
+    # Define year range
+    min_year, max_year = int(df['year'].min()), int(df['year'].max())
 
-    # Dropdown year selector
-    years_options = ["All"] + sorted([str(year) for year in df['year'].unique()])
-    selected_year = st.selectbox("Select Year", years_options)
+    # Create slider for selecting 2-year interval
+    selected_range = st.slider(
+        "Select Year Range",
+        min_value=min_year,
+        max_value=max_year,
+        value=(2013, 2023),
+        step=1
+    )
 
-    # Get delay totals for selected year
-    delay_total = yearly_totals[selected_year]
+    # Filter DataFrame by selected year range
+    df_filtered = df[(df['year'] >= selected_range[0]) & (df['year'] <= selected_range[1])]
+
+    # Recompute totals after filtering
+    delay_total = df_filtered[["carrier_ct", "weather_ct", "nas_ct", "security_ct", "late_aircraft_ct"]].sum()
+
+    label_map = {
+        "carrier_ct": "Carrier",
+        "weather_ct": "Weather",
+        "nas_ct": "NAS (National Airspace System)",
+        "security_ct": "Security",
+        "late_aircraft_ct": "Late Aircraft"
+    }
+
     labels = [label_map[col] for col in delay_total.index]
     values = delay_total.values
     formatted_values = [format_with_dots(v) for v in values]
-    title = f"Delay Causes for {selected_year}" if selected_year != "All" else "Delay Causes for All Years"
+    title = f"Delay Causes from {selected_range[0]} to {selected_range[1]}"
 
-    # Define color palette
     colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A']
-
-    # Compute percent manually with 2f formatting
     percentages = (values / np.sum(values)) * 100
     custom_labels = [f"<b>{label}</b><br>{percent:.2f}%" for label, percent in zip(labels, percentages)]
 
-    # Create donut chart
     fig = go.Figure(data=[go.Pie(
         labels=labels,
         values=values,
         hole=0.5,
         marker=dict(colors=colors, line=dict(color='white', width=2)),
         text=custom_labels,
-        textinfo='text',  # use custom text instead of label+percent
+        textinfo='text',
         customdata=formatted_values,
         hovertemplate=(
             '<b>%{label}</b><br>'

@@ -96,13 +96,17 @@ def trend_flight_year(df):
         }
 
         readable_delay_types = list(label_map.values())
-        options_dropdown = ['Show All'] + readable_delay_types
-        selected_option = st.selectbox("Choose Delay Cause:", options_dropdown, index=0)
+        selected_options = st.multiselect(
+            "Choose Delay Cause(s):",
+            readable_delay_types,
+            default=None
+        )
 
-        if selected_option == 'Show All':
+        # Fallback to all causes if none selected
+        if not selected_options:
             selected_causes = list(label_map.keys())
         else:
-            selected_causes = [reverse_label_map[selected_option]]
+            selected_causes = [reverse_label_map[opt] for opt in selected_options]
 
         df_melt = delay_grouped_cause.melt(
             id_vars='airline_year',
@@ -123,7 +127,7 @@ def trend_flight_year(df):
             custom_data=['Cause', 'Total_Delay_Formatted'],
             height=350
         )
-        
+
         fig.update_traces(
             hovertemplate=(
                 'Cause: <b>%{customdata[0]}</b><br>'

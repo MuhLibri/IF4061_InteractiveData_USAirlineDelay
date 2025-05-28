@@ -102,9 +102,15 @@ def trend_flight_month(df):
         }
 
         readable_types = list(label_map.values())
-        selected = st.selectbox("Choose Delay Cause:", ['Show All'] + readable_types, index=0, key="delay_cause_selectbox")
+        selected = st.multiselect(
+            "Choose Delay Cause(s):",
+            readable_types,
+            default=None,
+            key="delay_cause_multiselect"
+        )
 
-        selected_cols = list(label_map.keys()) if selected == 'Show All' else [reverse_map[selected]]
+        # If nothing selected, default to all
+        selected_cols = [reverse_map[cause] for cause in selected] if selected else list(label_map.keys())
 
         df_melt = delay_by_cause.melt(
             id_vars='month',
@@ -127,9 +133,9 @@ def trend_flight_month(df):
         )
         fig.update_traces(
             hovertemplate=
-                'Cause: <b>%{customdata[0]}</b><br>'
-                'Month: <b>%{x}</b><br>'
-                'Total Delay: <b>%{customdata[1]} flights</b><extra></extra>'
+            'Cause: <b>%{customdata[0]}</b><br>'
+            'Month: <b>%{x}</b><br>'
+            'Total Delay: <b>%{customdata[1]} flights</b><extra></extra>'
         )
         fig.update_layout(
             xaxis_title="Month",
