@@ -13,132 +13,82 @@ def preprocess_delay_data(df):
     ].sum(axis=1)
 
     total_delay = df.groupby('airline_year')['total_delay'].sum().reset_index()
-    delay_grouped_cause = df.groupby('airline_year')[
-        ['carrier_ct', 'weather_ct', 'nas_ct', 'security_ct', 'late_aircraft_ct']
-    ].sum().reset_index()
+    total_flights = df.groupby('airline_year')['arr_flights'].sum().reset_index()
+    
+    percentage_of_delay_flights = (total_delay['total_delay'] / total_flights['arr_flights']) * 100
 
     # Remove incomplete final year if applicable
     if total_delay['airline_year'].iloc[-1] == '2023/2024':
-        total_delay = total_delay[:-1]
-        delay_grouped_cause = delay_grouped_cause[:-1]
+        percentage_of_delay_flights = percentage_of_delay_flights[:-1]
 
-    return total_delay, delay_grouped_cause
+    return total_delay, total_flights, percentage_of_delay_flights
 
 
 def trend_flight_year(df):
-    st.markdown("<h2 style='font-size: 24px;'>Trend of Flight Delay Causes by Year</h2>", unsafe_allow_html=True)
-
     # === Cached Preprocessing ===
-    total_delay, delay_grouped_cause = preprocess_delay_data(df)
+    total_delay, total_flights, percentage_of_delay_flights = preprocess_delay_data(df)
 
-    # === User Selection ===
-    plot_type = st.radio(
-        "Choose Visualization Type:",
-        ["Total Delay", "Total Delay by Cause"],
-        horizontal=True,
-        key="plot_type_radio_year"
+    # Merge for easy access
+    merged_df = total_delay.copy()
+    merged_df['total_flights'] = total_flights['arr_flights']
+    merged_df['percentage'] = percentage_of_delay_flights
+    merged_df['pct_change'] = merged_df['percentage'].pct_change() * 100
+    merged_df['hover_pct'] = merged_df['percentage'].map(lambda x: f"{x:.2f}%")
+    merged_df['Type'] = 'Delay Percentage'
+
+    # Remove incomplete final year if exists
+    if merged_df['airline_year'].iloc[-1] == '2023/2024':
+        merged_df = merged_df.iloc[:-1]
+
+    # Get most recent year stats
+    recent_year = merged_df.iloc[-1]
+
+    # Extract last year for labeling
+    recent_label_year = recent_year['airline_year'].split('/')[-1]
+    
+    # Calculate delta (gain/loss) from previous year
+    previous_year = merged_df.iloc[-2]
+    delta_percentage = recent_year['percentage'] - previous_year['percentage']
+    delta_delay = recent_year['total_delay'] - previous_year['total_delay']
+    delta_flights = recent_year['total_flights'] - previous_year['total_flights']
+    
+    # === Top Metrics ===
+    col1, col2, col3 = st.columns(3)
+    col1.metric(
+        "Recent Year",
+        f"{recent_year['airline_year']}",
+        f"{delta_percentage:.2f}% from previous year"
+    )
+    col2.metric(f"Total Delay Flights ({recent_label_year})", format_with_dots(recent_year['total_delay']), format_with_dots(delta_delay) + " from previous year")
+    col3.metric(f"Total Overall Flights ({recent_label_year})", format_with_dots(recent_year['total_flights']), format_with_dots(delta_flights) + " from previous year")
+    
+    st.write("")
+    st.write("")
+    st.write("")
+    st.write("")
+    
+    st.markdown("<h2 style='font-size: 24px;'>Delay Flights Percentage By Year</h2>", unsafe_allow_html=True)
+
+    # === Line Chart ===
+    fig = px.line(
+        merged_df,
+        x='airline_year',
+        y='percentage',
+        markers=True,
+        color='Type',
+        hover_data={'hover_pct': True, 'percentage': False, 'Type': False},
+        height=350
+    )
+    fig.update_traces(
+        hovertemplate=
+            'Year: <b>%{x}</b><br>'
+            'Delay Percentage: <b>%{customdata[0]}<extra></extra></b>'
+    )
+    fig.update_layout(
+        xaxis_title="Year",
+        yaxis_title="Percentage of Delay Flights (%)",
+        margin=dict(t=20, b=40, l=40, r=20),
+        showlegend=False,
     )
 
-    # === Total Delay Plot ===
-    if plot_type == "Total Delay":
-        total_delay['hover_delay'] = total_delay['total_delay'].apply(format_with_dots)
-        total_delay['Type'] = 'Total Delay'
-        total_delay['pct_change'] = total_delay['total_delay'].pct_change() * 100
-
-        max_row = total_delay.loc[total_delay['total_delay'].idxmax()]
-        gain_row = total_delay.loc[total_delay['pct_change'].idxmax()]
-        drop_row = total_delay.loc[total_delay['pct_change'].idxmin()]
-
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Year with Highest Flights Delay", f"{max_row['airline_year']}", f"{max_row['total_delay']:,.0f} total flights delay")
-        col2.metric("Biggest Increase", f"{gain_row['airline_year']}", f"{gain_row['pct_change']:.2f}%")
-        col3.metric("Biggest Decrease", f"{drop_row['airline_year']}", f"{drop_row['pct_change']:.2f}%")
-
-        fig = px.line(
-            total_delay,
-            x='airline_year',
-            y='total_delay',
-            color='Type',
-            markers=True,
-            hover_data={'hover_delay': True, 'total_delay': False, 'Type': False},
-            height=350
-        )
-        fig.update_traces(
-            hovertemplate=
-                'Year: <b>%{x}</b><br>'
-                'Total Delay: <b>%{customdata[0]} flights<extra></extra></b>'
-        )
-        fig.update_layout(
-            xaxis_title="Year",
-            yaxis_title="Total Flights Delay",
-            margin=dict(t=20, b=40, l=40, r=20),
-            showlegend=True,
-        )
-
-        st.plotly_chart(fig, use_container_width=True)
-
-    # === Delay by Cause Plot ===
-    else:
-        label_map = {
-            "carrier_ct": "Carrier",
-            "weather_ct": "Weather",
-            "nas_ct": "NAS (National Airspace System)",
-            "security_ct": "Security",
-            "late_aircraft_ct": "Late Aircraft"
-        }
-        reverse_label_map = {v: k for k, v in label_map.items()}
-        color_map = {
-            'Carrier': '#1f77b4',
-            'Weather': '#ff7f0e',
-            'NAS (National Airspace System)': '#2ca02c',
-            'Security': '#d62728',
-            'Late Aircraft': '#9467bd'
-        }
-
-        readable_delay_types = list(label_map.values())
-        selected_options = st.multiselect(
-            "Choose Delay Cause(s):",
-            readable_delay_types,
-            default=None
-        )
-
-        # Fallback to all causes if none selected
-        if not selected_options:
-            selected_causes = list(label_map.keys())
-        else:
-            selected_causes = [reverse_label_map[opt] for opt in selected_options]
-
-        df_melt = delay_grouped_cause.melt(
-            id_vars='airline_year',
-            value_vars=selected_causes,
-            var_name='Cause',
-            value_name='Total_Delay'
-        )
-        df_melt['Cause'] = df_melt['Cause'].map(label_map)
-        df_melt['Total_Delay_Formatted'] = df_melt['Total_Delay'].apply(format_with_dots)
-
-        fig = px.line(
-            df_melt,
-            x='airline_year',
-            y='Total_Delay',
-            color='Cause',
-            markers=True,
-            color_discrete_map=color_map,
-            custom_data=['Cause', 'Total_Delay_Formatted'],
-            height=350
-        )
-
-        fig.update_traces(
-            hovertemplate=(
-                'Cause: <b>%{customdata[0]}</b><br>'
-                'Year: <b>%{x}</b><br>'
-                'Total Delay: <b>%{customdata[1]} flights</b><extra></extra>'
-            )
-        )
-        fig.update_layout(
-            xaxis_title="Year",
-            yaxis_title="Total Flights Delay",
-            margin=dict(t=0, b=40, l=40, r=20)
-        )
-
-        st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True)

@@ -3,53 +3,79 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-from src.utils import format_with_dots
-
+from src.utils import format_with_dots, get_airline_year
 
 @st.cache_data(show_spinner=False)
 def compute_delay_sums(df):
-    label_map = {
-        "carrier_ct": "Carrier",
-        "weather_ct": "Weather",
-        "nas_ct": "NAS (National Airspace System)",
-        "security_ct": "Security",
-        "late_aircraft_ct": "Late Aircraft"
-    }
+        # Add airline year column
+    df['airline_year'] = df.apply(get_airline_year, axis=1)
 
-    # Precompute totals for each year and overall
-    yearly_totals = {
-        str(year): df[df['year'] == year][list(label_map.keys())].sum()
-        for year in df['year'].unique()
-    }
-    yearly_totals["All"] = df[list(label_map.keys())].sum()
+    # Remove 2023/2024 data
+    df = df[df['airline_year'] != "2023/2024"]
 
-    return yearly_totals, label_map
+    # Select only airline years from 2013/2014 to 2022/2023
+    allowed_years = [f"{y}/{y+1}" for y in range(2013, 2023)]
+    df = df[df['airline_year'].isin(allowed_years)]
+
+    # --- Horizontal Stacked Bar Chart (Most Recent Year Only) ---
+    latest_airline_year = sorted(df['airline_year'].unique())[-1]
+    recent_data = df[df['airline_year'] == latest_airline_year]
+
+    grouped = recent_data.groupby('airline_year')[['carrier_ct', 'late_aircraft_ct', 'nas_ct', 'weather_ct', 'security_ct']].sum()
+    percentages = grouped.div(grouped.sum(axis=1), axis=0) * 100
+    
+    return percentages, latest_airline_year
 
 
 def delay_cause_proportion(df):
-    st.markdown(
-        "<h2 style='font-size: 24px;'>Proportion of Delay Causes</h2>",
-        unsafe_allow_html=True
+    # --- Preprocess Data ---
+    percentages, latest_airline_year = compute_delay_sums(df)
+
+    delay_causes = [
+        ('carrier_ct', 'Carrier', '#636EFA'),
+        ('weather_ct', 'Weather', '#EF553B'),
+        ('nas_ct', 'NAS (National Airspace System)', '#00CC96'),
+        ('security_ct', 'Security', '#AB63FA'),
+        ('late_aircraft_ct', 'Late Aircraft', '#FFA15A'),
+    ]
+
+    bar_fig = go.Figure()
+
+    for col, label, color in delay_causes:
+        pct = percentages[col].values[0]
+        bar_fig.add_trace(go.Bar(
+            y=percentages.index,
+            x=[pct],
+            name=label,
+            orientation='h',
+            marker_color=color,
+            text=[f'<b>{label}</b><br>{pct:.2f}%'],
+            textposition='inside',
+            insidetextanchor='middle',
+            meta=label,
+            hovertemplate=(
+                '<b>%{y}</b><br>'
+                '<b>%{meta}</b><br>'
+                'Delay Percentage: <b>%{x:.2f}%</b><extra></extra>'
+            ),
+        ))
+
+    bar_fig.update_layout(
+        barmode='stack',
+        title=dict(text=f"Delay Cause Proportions for {latest_airline_year}", font=dict(size=12)),
+        xaxis=dict(title='Percentage', range=[0, 100], ticksuffix='%'),
+        yaxis=dict(title=''),
+        height=150,
+        showlegend=False,
+        margin=dict(t=20, l=0, r=0, b=0),
     )
 
-    # Define year range
-    min_year, max_year = int(df['year'].min()), int(df['year'].max())
+    st.plotly_chart(bar_fig, use_container_width=True)
 
-    # Create slider for selecting 2-year interval
-    selected_range = st.slider(
-        "Select Year Range",
-        min_value=min_year,
-        max_value=max_year,
-        value=(2013, 2023),
-        step=1
-    )
+    # --- Pie Chart for All Data from 2013/2014 to 2022/2023 ---
+    st.markdown("<h2 style='font-size: 24px;'>Delay Cause Distribution Across Years</h2>", unsafe_allow_html=True)
 
-    # Filter DataFrame by selected year range
-    df_filtered = df[(df['year'] >= selected_range[0]) & (df['year'] <= selected_range[1])]
-
-    # Recompute totals after filtering
-    delay_total = df_filtered[["carrier_ct", "weather_ct", "nas_ct", "security_ct", "late_aircraft_ct"]].sum()
-
+    delay_total = df[["carrier_ct", "weather_ct", "nas_ct", "security_ct", "late_aircraft_ct"]].sum()
     label_map = {
         "carrier_ct": "Carrier",
         "weather_ct": "Weather",
@@ -61,8 +87,6 @@ def delay_cause_proportion(df):
     labels = [label_map[col] for col in delay_total.index]
     values = delay_total.values
     formatted_values = [format_with_dots(v) for v in values]
-    title = f"Delay Causes from {selected_range[0]} to {selected_range[1]}"
-
     colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A']
     percentages = (values / np.sum(values)) * 100
     custom_labels = [f"<b>{label}</b><br>{percent:.2f}%" for label, percent in zip(labels, percentages)]
@@ -83,14 +107,9 @@ def delay_cause_proportion(df):
     )])
 
     fig.update_layout(
-        title=dict(
-            text=title,
-            font=dict(size=20),
-            x=0.5,
-            xanchor='center'
-        ),
-        margin=dict(t=50, b=20, l=20, r=20),
-        height=500
+        # title=dict(text="Delay Causes from 2013/2014 to 2022/2023", font=dict(size=20), x=0.5, xanchor='center'),
+        margin=dict(t=20, b=20, l=20, r=20),
+        height=330,
     )
 
     st.plotly_chart(fig, use_container_width=True)
