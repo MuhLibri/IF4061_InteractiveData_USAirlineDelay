@@ -5,6 +5,7 @@ import warnings
 from src.trend_flight_year import trend_flight_year
 from src.delay_cause_proportion import delay_cause_proportion
 from src.average_carrier_delay import average_carrier_delay
+from src.delay_cause_proportion import delay_cause_stacked_bar
 
 warnings.filterwarnings('ignore')
 
@@ -67,6 +68,13 @@ with col1:
 with col2:
     delay_cause_proportion(df, selected_years)
 # -----------------------------------------------------------------------------------------------------
+
+
+# -----------------------------------------------------------------------------------------------------
+## Graph 3: Stacked Bar Chart Penyebab Keterlambatan per Tahun
+delay_cause_stacked_bar(df, selected_years)
+# -----------------------------------------------------------------------------------------------------
+
 
 # st.write("")
 # st.write("")
