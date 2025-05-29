@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import warnings
 import os
+from src.average_carrier_delay import average_carrier_delay
 
 st.set_page_config(page_title="Airliner Comparison", layout="wide")
 
@@ -42,9 +43,10 @@ selected_years_int = st.slider(
 start_index = selected_years_int[0] - 2014  # e.g. 2014 -> 0
 end_index = selected_years_int[1] - 2014    # e.g. 2023 -> 9
 selected_years = valid_years[start_index:end_index + 1]
-
-# Optional: Show the mapped academic years
 st.write(f"Selected Airline Years: {selected_years[0]} to {selected_years[-1]}")
 
 st.write("")
 st.write("")
+
+## Graph 4: Daftar Rata-rata Keterlambatan penerbangan per maskapai
+average_carrier_delay(df, selected_years)

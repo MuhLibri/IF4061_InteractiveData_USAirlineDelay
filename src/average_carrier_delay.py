@@ -1,5 +1,6 @@
 import streamlit as st
 import plotly.express as px
+from src.utils import format_with_dots, get_airline_year
 
 @st.cache_data(show_spinner=False)
 def compute_carrier_avg_delay(df):
@@ -9,7 +10,10 @@ def compute_carrier_avg_delay(df):
         .sort_values()
     )
 
-def average_carrier_delay(df):
+
+def average_carrier_delay(df, selected_years):
+    df['airline_year'] = df.apply(get_airline_year, axis=1)
+    df = df[df['airline_year'].isin(selected_years)]
     st.markdown("<h2 style='font-size: 24px;'>List of Average Flight Delays by Airline</h2>", unsafe_allow_html=True)
 
     # Compute and cache average delay per carrier
