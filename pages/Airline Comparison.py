@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import warnings
 import os
-from src.average_carrier_delay import average_carrier_delay
+from src.average_carrier_delay import average_carrier_delay, load_and_prepare_data
 
 st.set_page_config(page_title="Airliner Comparison", layout="wide")
 
@@ -20,7 +20,7 @@ st.markdown(
 # Read csv file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 csv_path = os.path.join(BASE_DIR, "..", "src", "dataset", "Airline_Delay_Cause_Data_Processing.csv")
-df = pd.read_csv(csv_path)
+df = load_and_prepare_data(csv_path)
 
 st.write("")
 st.write("")
