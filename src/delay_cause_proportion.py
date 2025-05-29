@@ -6,9 +6,14 @@ import streamlit as st
 from src.utils import format_with_dots, get_airline_year
 
 @st.cache_data(show_spinner=False)
-def compute_delay_sums(df):
+def compute_delay_sums(df, selected_years):
         # Add airline year column
     df['airline_year'] = df.apply(get_airline_year, axis=1)
+    df = df[df['airline_year'].isin(selected_years)]
+    
+    if df.empty:
+        st.warning("No data available for the selected year range.")
+        return
 
     # Remove 2023/2024 data
     df = df[df['airline_year'] != "2023/2024"]
@@ -24,12 +29,12 @@ def compute_delay_sums(df):
     grouped = recent_data.groupby('airline_year')[['carrier_ct', 'late_aircraft_ct', 'nas_ct', 'weather_ct', 'security_ct']].sum()
     percentages = grouped.div(grouped.sum(axis=1), axis=0) * 100
     
-    return percentages, latest_airline_year
+    return percentages, latest_airline_year, selected_years
 
 
-def delay_cause_proportion(df):
+def delay_cause_proportion(df, selected_years):
     # --- Preprocess Data ---
-    percentages, latest_airline_year = compute_delay_sums(df)
+    percentages, latest_airline_year, selected_years = compute_delay_sums(df, selected_years)
 
     delay_causes = [
         ('carrier_ct', 'Carrier', '#636EFA'),

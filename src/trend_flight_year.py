@@ -24,11 +24,12 @@ def preprocess_delay_data(df):
     return total_delay, total_flights, percentage_of_delay_flights
 
 
-def trend_flight_year(df):
-    # === Cached Preprocessing ===
+def trend_flight_year(df, selected_years):
+    df['airline_year'] = df.apply(get_airline_year, axis=1)
+    df = df[df['airline_year'].isin(selected_years)]
+
     total_delay, total_flights, percentage_of_delay_flights = preprocess_delay_data(df)
 
-    # Merge for easy access
     merged_df = total_delay.copy()
     merged_df['total_flights'] = total_flights['arr_flights']
     merged_df['percentage'] = percentage_of_delay_flights
@@ -36,12 +37,12 @@ def trend_flight_year(df):
     merged_df['hover_pct'] = merged_df['percentage'].map(lambda x: f"{x:.2f}%")
     merged_df['Type'] = 'Delay Percentage'
 
-    # Remove incomplete final year if exists
-    if merged_df['airline_year'].iloc[-1] == '2023/2024':
-        merged_df = merged_df.iloc[:-1]
+    if len(merged_df) < 2:
+        st.warning("Not enough years selected to compute trends.")
+        return
 
-    # Get most recent year stats
     recent_year = merged_df.iloc[-1]
+    previous_year = merged_df.iloc[-2]
 
     # Extract last year for labeling
     recent_label_year = recent_year['airline_year'].split('/')[-1]

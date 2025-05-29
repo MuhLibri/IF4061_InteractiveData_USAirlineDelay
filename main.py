@@ -29,18 +29,43 @@ df = pd.read_csv('src/dataset/Airline_Delay_Cause_Data_Processing.csv')
 st.write("")
 st.write("")
 
+# Airline academic years from 2013/2014 to 2022/2023
+valid_years = [f"{y}/{y+1}" for y in range(2013, 2023)]  # ['2013/2014', ..., '2022/2023']
+
+st.markdown("<h2 style='font-size: 16px;'>Select Year Range (based on end year)</h2>", unsafe_allow_html=True)
+
+# Slider from 2014 to 2023 (which maps to indices 0 to 9 of valid_years)
+selected_years_int = st.slider(
+    "",
+    min_value=2014,
+    max_value=2023,
+    value=(2014, 2023),
+    step=1
+)
+
+# Map 2014–2023 to "2013/2014"–"2022/2023"
+start_index = selected_years_int[0] - 2014  # e.g. 2014 -> 0
+end_index = selected_years_int[1] - 2014    # e.g. 2023 -> 9
+selected_years = valid_years[start_index:end_index + 1]
+
+# Optional: Show the mapped academic years
+st.write(f"Selected Airline Years: {selected_years[0]} to {selected_years[-1]}")
+
+st.write("")
+st.write("")
 
 # -----------------------------------------------------------------------------------------------------
 col1, col2 = st.columns(2)
 # -----------------------------------------------------------------------------------------------------
+
 ## Graph 1: Tren Penyebab Keterlambatan Penerbangan per Tahun
 with col1:
-    trend_flight_year(df)
+    trend_flight_year(df, selected_years)
 # -----------------------------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------------------------------
 ## Graph 2: Tren Penyebab Keterlambatan Penerbangan per Bulan
 with col2:
-    delay_cause_proportion(df)
+    delay_cause_proportion(df, selected_years)
 # -----------------------------------------------------------------------------------------------------
 
 # st.write("")
