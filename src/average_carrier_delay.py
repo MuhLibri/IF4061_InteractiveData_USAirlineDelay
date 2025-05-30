@@ -24,7 +24,19 @@ def load_and_prepare_data(path):
 
 def average_carrier_delay(df, selected_years):
     df = filter_data_by_year(df, selected_years)
-    st.markdown("<h2 style='font-size: 24px;'>List of Average Flight Delays by Carriers</h2>", unsafe_allow_html=True)
+    year_range = f"{selected_years[0]}" if selected_years[0] == selected_years[-1] else f"{selected_years[0]} - {selected_years[-1]}"
+    st.markdown(f"<h2 style='font-size: 24px;'>List of Average Flight Delays by Carriers ({year_range})</h2>", unsafe_allow_html=True)
+    
+    # Check if data is available for the selected years
+    carrier_avg = compute_carrier_avg_delay(filter_data_by_year(df, selected_years))
+
+    # Get highest and lowest
+    highest_carrier = carrier_avg.idxmax()
+    highest_value = carrier_avg.max()
+    lowest_carrier = carrier_avg.idxmin()
+    lowest_value = carrier_avg.min()
+
+    st.write("")
 
     # Compute and cache average delay per carrier
     carrier_avg_delay = compute_carrier_avg_delay(df)
@@ -35,7 +47,29 @@ def average_carrier_delay(df, selected_years):
     overall_avg = carrier_avg_delay.mean()
 
     # Display metric
-    st.metric(label="Overall Average Delay", value=f"{overall_avg:.2f}%")
+    col1, col2, col3 = st.columns(3)
+    
+    # Show average delay percentage
+    col1.metric(
+        "Average Delay Percentage",
+        f"{overall_avg:.2f}%",
+    )
+    
+    # Show highest carrier
+    col2.metric(
+        "Highest Delay Percentage Carrier",
+        f"{highest_carrier}",
+        delta=f"{highest_value:.2f}%",
+    )
+    
+    # Show lowest carrier
+    col3.metric(
+        "Lowest Delay Percentage Carrier",
+        f"{lowest_carrier}",
+        delta=f"{lowest_value:.2f}%",
+        delta_color="inverse" if lowest_value < overall_avg else "normal"
+    )
+   
 
     df_plot = selected_data.reset_index()
     df_plot.columns = ['Carrier', 'AvgDelayPercent']

@@ -31,7 +31,7 @@ state_coords = {
     'ID': [44.3509, -114.6130], 'IL': [40.0417, -89.1965],
     'IN': [39.8942, -86.2816], 'IA': [42.0751, -93.4960],
     'KS': [38.4937, -98.3804], 'KY': [37.5347, -85.3021],
-    'LA': [31.0689, -91.9968], 'ME': [45.3695, -69.2428],
+    'LA': [31.7689, -92.3968], 'ME': [45.3695, -69.2428],
     'MD': [39.0550, -76.7909], 'MA': [42.2596, -71.8083],
     'MI': [43.3467, -84.7102], 'MN': [46.2807, -94.3053],
     'MS': [32.7364, -89.6678], 'MO': [38.3566, -92.4580],
@@ -70,7 +70,8 @@ def load_and_prepare_data(path):
     return df
 
 def average_state_delay(df, selected_years):
-    st.subheader("List of Average Flight Delays by States")
+    year_range = f"{selected_years[0]}" if selected_years[0] == selected_years[-1] else f"{selected_years[0]} - {selected_years[-1]}"
+    st.markdown(f"<h2 style='font-size: 24px;'>List of Average Flight Delays by States ({year_range})</h2>", unsafe_allow_html=True)
 
     # Filter berdasarkan tahun
     filtered_df = filter_data_by_year(df, selected_years)
@@ -80,6 +81,33 @@ def average_state_delay(df, selected_years):
 
     # Tambahkan nama lengkap negara bagian
     state_delay['airport_state_full'] = state_delay['airport_state'].map(state_abbrev_to_name)
+
+    # Overview metrics
+    highest_state_row = state_delay.loc[state_delay['arr_del15_percentage'].idxmax()]
+    lowest_state_row = state_delay.loc[state_delay['arr_del15_percentage'].idxmin()]
+    overall_avg = state_delay['arr_del15_percentage'].mean()
+
+    col1, col2, col3 = st.columns(3)
+
+    col1.metric(
+        "Average Delay Percentage",
+        f"{overall_avg:.2f}%",
+    )
+
+    col2.metric(
+        "Highest Delay Percentage State",
+        f"{highest_state_row['airport_state_full']} ({highest_state_row['airport_state']})",
+        delta=f"{highest_state_row['arr_del15_percentage']:.2f}%",
+    )
+
+    col3.metric(
+        "Lowest Delay Percentage State",
+        f"{lowest_state_row['airport_state_full']} ({lowest_state_row['airport_state']})",
+        delta=f"{lowest_state_row['arr_del15_percentage']:.2f}%",
+        delta_color="inverse" if lowest_state_row['arr_del15_percentage'] < overall_avg else "normal"
+    )
+
+    st.write("")
 
     # Buat visualisasi choropleth
     choropleth = go.Choropleth(
