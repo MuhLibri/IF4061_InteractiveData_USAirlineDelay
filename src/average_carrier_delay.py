@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-from src.utils import format_with_dots, get_airline_year
+from src.utils import get_airline_year
 
 @st.cache_data(show_spinner=False)
 def compute_carrier_avg_delay(df):
@@ -29,28 +29,13 @@ def average_carrier_delay(df, selected_years):
     # Compute and cache average delay per carrier
     carrier_avg_delay = compute_carrier_avg_delay(df)
 
-    # User option
-    option = st.radio(
-        "Choose Display Option:",
-        ["Show All", "Top 5 Carriers with Highest Delay", "Top 5 Carriers with Lowest Delay"],
-        horizontal=True,
-        key="carrier_delay_option"
-    )
+    selected_data = carrier_avg_delay.sort_values(ascending=False)
 
-    # Determine filtered subset based on selected option
-    if option == "Show All":
-        selected_data = carrier_avg_delay.sort_values(ascending=False)
+    # Compute overall average
+    overall_avg = carrier_avg_delay.mean()
 
-        # Compute overall average
-        overall_avg = carrier_avg_delay.mean()
-
-        # Display metric
-        st.metric(label="Overall Average Delay", value=f"{overall_avg:.2f}%")
-
-    elif option == "Top 5 Carriers with Highest Delay":
-        selected_data = carrier_avg_delay.tail(5).sort_values(ascending=False)
-    else:  # "Top 5 Carriers with Lowest Delay"
-        selected_data = carrier_avg_delay.head(5)
+    # Display metric
+    st.metric(label="Overall Average Delay", value=f"{overall_avg:.2f}%")
 
     df_plot = selected_data.reset_index()
     df_plot.columns = ['Carrier', 'AvgDelayPercent']
