@@ -4,21 +4,22 @@ import warnings
 
 from src.trend_flight_year import trend_flight_year
 from src.delay_cause_proportion import delay_cause_proportion
-from src.average_carrier_delay import average_carrier_delay
-from src.delay_cause_proportion import delay_cause_stacked_bar
+from src.delay_cause_stackbar import delay_cause_stacked_bar
 
 warnings.filterwarnings('ignore')
 
 # Set page config
-st.set_page_config(page_title="Analysis of U.S. Flight Data (2013-2023)", layout="wide")
+st.set_page_config(page_title="U.S. Flight Delay Analysis (2013-2023)", layout="wide")
 
 # Title and description
 st.markdown(
     """
     <div style='
     '>
-        <h1 style='margin-top: 0;'>✈️ US Airline Flight Delay Dashboard</h1>
-        
+        <h1 style='margin-top: 0;'>✈️ U.S. Flight Delay Dashboard Analysis</h1>
+        <h2 style='font-size: 24px; font-weight: bold;'>
+            Delay Cause Trend Analysis
+        </h2>
     </div>
     """,
     unsafe_allow_html=True
@@ -50,7 +51,7 @@ end_index = selected_years_int[1] - 2014    # e.g. 2023 -> 9
 selected_years = valid_years[start_index:end_index + 1]
 
 # Optional: Show the mapped academic years
-st.write(f"Selected Airline Years: {selected_years[0]} to {selected_years[-1]}")
+st.write(f"Selected Years: {selected_years[0]} to {selected_years[-1]}")
 
 st.write("")
 st.write("")
@@ -73,16 +74,4 @@ with col2:
 # -----------------------------------------------------------------------------------------------------
 ## Graph 3: Stacked Bar Chart Penyebab Keterlambatan per Tahun
 delay_cause_stacked_bar(df, selected_years)
-# -----------------------------------------------------------------------------------------------------
-
-
-# st.write("")
-# st.write("")
-
-# col3, col4 = st.columns([0.4, 0.6], gap="large")
-# -----------------------------------------------------------------------------------------------------
-## Graph 3: Proporsi Penyebab Keterlambatan Penerbangan
-# with col3:
-#     delay_cause_proportion(df)
-# -----------------------------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------------------------------

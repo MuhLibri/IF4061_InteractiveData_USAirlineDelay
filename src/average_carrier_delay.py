@@ -24,7 +24,7 @@ def load_and_prepare_data(path):
 
 def average_carrier_delay(df, selected_years):
     df = filter_data_by_year(df, selected_years)
-    st.markdown("<h2 style='font-size: 24px;'>List of Average Flight Delays by Airline</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='font-size: 24px;'>List of Average Flight Delays by Carriers</h2>", unsafe_allow_html=True)
 
     # Compute and cache average delay per carrier
     carrier_avg_delay = compute_carrier_avg_delay(df)
