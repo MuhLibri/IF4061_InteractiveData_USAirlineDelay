@@ -26,7 +26,11 @@ st.markdown(
 )
 
 # Read csv file
-df = pd.read_csv('src/dataset/Airline_Delay_Cause_Data_Processing.csv')
+@st.cache_data
+def load_data():
+    return pd.read_csv('src/dataset/Airline_Delay_Cause_Data_Processing.csv')
+
+df = load_data()
 
 st.write("")
 st.write("")

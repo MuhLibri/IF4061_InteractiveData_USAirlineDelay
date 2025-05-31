@@ -31,7 +31,6 @@ def compute_delay_sums(df, selected_years):
     
     return percentages, latest_airline_year, selected_years
 
-
 def delay_cause_proportion(df, selected_years):
     # --- Preprocess Data ---
     percentages, latest_airline_year, selected_years = compute_delay_sums(df, selected_years)

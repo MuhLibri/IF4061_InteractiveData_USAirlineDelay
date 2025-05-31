@@ -23,7 +23,6 @@ def preprocess_delay_data(df):
 
     return total_delay, total_flights, percentage_of_delay_flights
 
-
 def trend_flight_year(df, selected_years):
     df['airline_year'] = df.apply(get_airline_year, axis=1)
     df = df[df['airline_year'].isin(selected_years)]
