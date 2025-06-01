@@ -112,7 +112,7 @@ def delay_cause_proportion(df, selected_years):
 
     fig.update_layout(
         # title=dict(text="Delay Causes from 2013/2014 to 2022/2023", font=dict(size=20), x=0.5, xanchor='center'),
-        margin=dict(t=20, b=20, l=20, r=20),
+        margin=dict(t=20, b=20, l=60, r=20),
         height=330,
     )
 
