@@ -68,18 +68,20 @@ def trend_flight_year(df, selected_years):
         unsafe_allow_html=True,
     )
     col1.metric(
-        "Recent Year",
-        f"{recent_year['airline_year']}",
-        f"{delta_percentage:.2f}% from previous year"
+        f"Percentage of Flight Delays ({recent_label_year})",
+        f"{recent_year['percentage']:.2f}%",
+        f"{delta_percentage:.2f}% from previous year",
+        delta_color="inverse"
     )
-    col2.metric(f"Total Delay Flights ({recent_label_year})", format_with_dots(recent_year['total_delay']), format_with_dots(delta_delay) + " from previous year")
+    col2.metric(f"Total Flight Delays ({recent_label_year})", format_with_dots(recent_year['total_delay']), format_with_dots(delta_delay) + " from previous year", delta_color="inverse")
     col3.metric(f"Total Overall Flights ({recent_label_year})", format_with_dots(recent_year['total_flights']), format_with_dots(delta_flights) + " from previous year")
     
     st.write("")
     st.write("")
     st.write("")
-
-    st.markdown("<h2 style='font-size: 24px;'>Delay Flights Percentage By Year</h2>", unsafe_allow_html=True)
+    st.write("")
+    
+    st.markdown("<h2 style='font-size: 24px;'>Flight Delays Trend</h2>", unsafe_allow_html=True)
 
     # === Line Chart ===
     fig = px.line(
@@ -98,7 +100,7 @@ def trend_flight_year(df, selected_years):
     )
     fig.update_layout(
         xaxis_title="Year",
-        yaxis_title="Percentage of Delay Flights (%)",
+        yaxis_title="Percentage of Flight Delays (%)",
         margin=dict(t=20, b=40, l=40, r=20),
         showlegend=False,
     )

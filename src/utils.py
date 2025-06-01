@@ -8,7 +8,7 @@ def get_airline_year(row):
 # Utility function to format numbers with dots instead of commas
 def format_with_dots(val):
     s = f"{val:,.0f}"
-    return s.replace(',', '.')
+    return s
 
 # Function to get the two-month span for metrics display
 def get_two_month_span(idx, total_delay):

@@ -6,7 +6,7 @@ import streamlit as st
 from src.utils import get_airline_year, format_with_dots  # Ensure this is imported from utils
 
 def delay_cause_stacked_bar(df, selected_years):
-    st.markdown("<h2 style='font-size: 24px;'>Stacked Trend of Total Flight Delays by Cause</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='font-size: 24px;'>Flight Delays Trend by Cause</h2>", unsafe_allow_html=True)
 
     delay_causes = [
         ("carrier_ct", "Carrier", "#636EFA"),
@@ -25,40 +25,48 @@ def delay_cause_stacked_bar(df, selected_years):
         return
 
     # Group and sort
-    yearly_data = df.groupby("airline_year")[[c[0] for c in delay_causes]].sum().reset_index()
+    yearly_data = df.groupby("airline_year")[[c[0] for c in delay_causes] + ["arr_flights"]].sum().reset_index()
     yearly_data = yearly_data.sort_values("airline_year")
 
-    # Create stacked bar chart
+    # Calculate total delays for percentage calculation
+    yearly_data["total_delays"] = yearly_data[[c[0] for c in delay_causes]].sum(axis=1)
+
+    # Calculate delay percentage per cause per year (per batang/tahun)
+    for col, _, _ in delay_causes:
+        yearly_data[col + '_pct'] = (yearly_data[col] / yearly_data['arr_flights']) * 100
+
+    # Create stacked bar chart (y = persentase delay, hover: total delay & % per batang)
     fig = go.Figure()
     for col, label, color in delay_causes:
-        # Format values for hovertemplate
         formatted_values = yearly_data[col].apply(format_with_dots)
-
+        percentages = yearly_data[col + '_pct']
+        customdata = np.stack([formatted_values, percentages.round(2)], axis=-1)
         fig.add_trace(go.Bar(
             x=yearly_data["airline_year"],
-            y=yearly_data[col],
+            y=percentages,
             name=label,
             marker_color=color,
             meta=[label] * len(yearly_data),
-            customdata=formatted_values,
+            customdata=customdata,
             hovertemplate=(
                 '<b>%{x}</b><br>'
                 '<b>%{meta}</b><br>'
-                'Total Delays: <b>%{customdata}</b><extra></extra>'
+                'Total Delay: <b>%{customdata[0]}</b><br>'
+                'Percentage (of all flights): <b>%{customdata[1]:.2f}%</b><extra></extra>'
             )
         ))
 
     fig.update_layout(
         barmode='stack',
         xaxis=dict(title="Year", tickangle=45),
-        yaxis=dict(title="Number of Delays", tickformat=","),
+        yaxis=dict(title="Percentage of Flight Delays (%)"),
         height=500,
-        margin=dict(t=60, b=40, l=40, r=40),  # increase top margin for legend spacing
+        margin=dict(t=60, b=40, l=40, r=40),
         showlegend=True,
         legend=dict(
             orientation="h",
             yanchor="bottom",
-            y=1.05,  # position legend slightly above the plot
+            y=1.05,
             xanchor="center",
             x=0.5
         ),
