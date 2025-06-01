@@ -107,8 +107,8 @@ def delay_cause_proportion(df, selected_years):
     fig = go.Figure(data=[go.Pie(
         labels=labels,
         values=values,
-        hole=0.5,
-        marker=dict(colors=colors, line=dict(color='white', width=2)),
+        hole=0.4,
+        marker=dict(colors=colors, line=dict(color='white', width=0.5)),
         text=custom_labels,
         textinfo='text',
         customdata=formatted_values,
@@ -120,9 +120,15 @@ def delay_cause_proportion(df, selected_years):
     )])
 
     fig.update_layout(
-        # title=dict(text="Delay Causes from 2013/2014 to 2022/2023", font=dict(size=20), x=0.5, xanchor='center'),
-        margin=dict(t=20, b=20, l=60, r=20),
+        margin=dict(t=0, b=20, l=0, r=0),  # Increase top margin for legend space
         height=330,
+        legend=dict(
+            orientation="h",         # Horizontal layout
+            yanchor="bottom",
+            y=1.05,                  # Slightly above the chart
+            xanchor="center",
+            x=0.5                    # Centered horizontally
+        )
     )
 
     st.plotly_chart(fig, use_container_width=True)
