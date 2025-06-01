@@ -54,6 +54,19 @@ def trend_flight_year(df, selected_years):
     
     # === Top Metrics ===
     col1, col2, col3 = st.columns(3)
+    st.markdown(
+        """
+    <style>
+    [data-testid="stMetricValue"] {
+        font-size: 32px;
+    }
+    [data-testid="stMetricDelta"] {
+        font-size: 10px;
+    }
+    </style>
+    """,
+        unsafe_allow_html=True,
+    )
     col1.metric(
         "Recent Year",
         f"{recent_year['airline_year']}",
@@ -65,8 +78,7 @@ def trend_flight_year(df, selected_years):
     st.write("")
     st.write("")
     st.write("")
-    st.write("")
-    
+
     st.markdown("<h2 style='font-size: 24px;'>Delay Flights Percentage By Year</h2>", unsafe_allow_html=True)
 
     # === Line Chart ===
