@@ -25,7 +25,7 @@ def load_and_prepare_data(path):
 def average_carrier_delay(df, selected_years):
     df = filter_data_by_year(df, selected_years)
     year_range = f"{selected_years[0]}" if selected_years[0] == selected_years[-1] else f"{selected_years[0]} - {selected_years[-1]}"
-    st.markdown(f"<h2 style='font-size: 24px;'>List of Average Flight Delays by Carriers ({year_range})</h2>", unsafe_allow_html=True)
+    st.markdown(f"<h2 style='font-size: 24px;'>List of Average Flight Delays by Carriers<br><span style='font-size: 20px;'>({year_range})</span></h2>", unsafe_allow_html=True)
     
     # Check if data is available for the selected years
     carrier_avg = compute_carrier_avg_delay(filter_data_by_year(df, selected_years))

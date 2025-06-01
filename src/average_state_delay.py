@@ -71,7 +71,7 @@ def load_and_prepare_data(path):
 
 def average_state_delay(df, selected_years):
     year_range = f"{selected_years[0]}" if selected_years[0] == selected_years[-1] else f"{selected_years[0]} - {selected_years[-1]}"
-    st.markdown(f"<h2 style='font-size: 24px;'>List of Average Flight Delays by States ({year_range})</h2>", unsafe_allow_html=True)
+    st.markdown(f"<h2 style='font-size: 24px;'>List of Average Flight Delays by States<br><span style='font-size: 20px;'>({year_range})</span></h2>", unsafe_allow_html=True)
 
     # Filter berdasarkan tahun
     filtered_df = filter_data_by_year(df, selected_years)

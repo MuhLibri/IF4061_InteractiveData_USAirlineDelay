@@ -61,7 +61,7 @@ def trend_flight_year(df, selected_years):
         font-size: 32px;
     }
     [data-testid="stMetricDelta"] {
-        font-size: 10px;
+        font-size: 12px;
     }
     </style>
     """,
@@ -77,11 +77,9 @@ def trend_flight_year(df, selected_years):
     col3.metric(f"Total Overall Flights ({recent_label_year})", format_with_dots(recent_year['total_flights']), format_with_dots(delta_flights) + " from previous year")
     
     st.write("")
-    st.write("")
-    st.write("")
-    st.write("")
     
-    st.markdown("<h2 style='font-size: 24px;'>Flight Delays Trend</h2>", unsafe_allow_html=True)
+    year_range = f"{selected_years[0]}" if selected_years[0] == selected_years[-1] else f"{selected_years[0]} - {selected_years[-1]}"
+    st.markdown(f"<h2 style='font-size: 24px;'>Flight Delays Trend Across Years<br><span style='font-size: 20px;'>({year_range})</span></h2>", unsafe_allow_html=True)    
 
     # === Line Chart ===
     fig = px.line(

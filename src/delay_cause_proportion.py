@@ -43,8 +43,8 @@ def delay_cause_proportion(df, selected_years):
         ('late_aircraft_ct', 'Late Aircraft', '#FFA15A'),
     ]
 
+    # --- Horizontal Stacked Bar (Most Recent Year Only) ---
     bar_fig = go.Figure()
-
     for col, label, color in delay_causes:
         pct = percentages[col].values[0]
         bar_fig.add_trace(go.Bar(
@@ -69,15 +69,24 @@ def delay_cause_proportion(df, selected_years):
         title=dict(text=f"Delay Cause Proportions for {latest_airline_year}", font=dict(size=12)),
         xaxis=dict(title='Percentage', range=[0, 100], ticksuffix='%'),
         yaxis=dict(title=''),
-        height=150,
+        height=121,
         showlegend=False,
-        margin=dict(t=20, l=0, r=0, b=0),
+        margin=dict(t=20, l=20, r=20, b=0),
     )
 
     st.plotly_chart(bar_fig, use_container_width=True)
 
-    # --- Pie Chart for All Data from 2013/2014 to 2022/2023 ---
-    st.markdown("<h2 style='font-size: 24px;'>Delay Cause Proportions Across Years</h2>", unsafe_allow_html=True)
+    # --- Pie Chart: Based on selected_years ---
+    year_range = f"{selected_years[0]}" if selected_years[0] == selected_years[-1] else f"{selected_years[0]} - {selected_years[-1]}"
+    st.markdown(f"<h2 style='font-size: 24px;'>Delay Cause Proportions Trend Across Years<br><span style='font-size: 20px;'>({year_range})</span></h2>", unsafe_allow_html=True)
+
+    # Filter df again (to use it for the pie chart)
+    df['airline_year'] = df.apply(get_airline_year, axis=1)
+    df = df[df['airline_year'].isin(selected_years)]
+    
+    if df.empty:
+        st.warning("No data available for the pie chart.")
+        return
 
     delay_total = df[["carrier_ct", "weather_ct", "nas_ct", "security_ct", "late_aircraft_ct"]].sum()
     label_map = {
