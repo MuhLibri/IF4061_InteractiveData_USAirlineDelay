@@ -50,7 +50,6 @@ selected_years = valid_years[start_index:end_index + 1]
 st.write(f"Selected Years: {selected_years[0]} to {selected_years[-1]}")
 
 st.write("")
-st.write("")
 
 ## Graph 4: Daftar Rata-rata Keterlambatan penerbangan per maskapai
 average_carrier_delay(df, selected_years)

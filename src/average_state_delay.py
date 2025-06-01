@@ -87,25 +87,41 @@ def average_state_delay(df, selected_years):
     lowest_state_row = state_delay.loc[state_delay['arr_del15_percentage'].idxmin()]
     overall_avg = state_delay['arr_del15_percentage'].mean()
 
-    col1, col2, col3 = st.columns(3)
+    # Custom styled metrics, no border, improved spacing, white text except red/green
+    col1, col2, col3 = st.columns([1, 1, 1], gap="large")
 
-    col1.metric(
-        "Average Delay Percentage",
-        f"{overall_avg:.2f}%",
-    )
-
-    col2.metric(
-        "Highest Delay Percentage State",
-        f"{highest_state_row['airport_state_full']} ({highest_state_row['airport_state']})",
-        delta=f"{highest_state_row['arr_del15_percentage']:.2f}%",
-    )
-
-    col3.metric(
-        "Lowest Delay Percentage State",
-        f"{lowest_state_row['airport_state_full']} ({lowest_state_row['airport_state']})",
-        delta=f"{lowest_state_row['arr_del15_percentage']:.2f}%",
-        delta_color="inverse" if lowest_state_row['arr_del15_percentage'] < overall_avg else "normal"
-    )
+    with col1:
+        st.markdown(
+            f"""
+            <div style='padding: 8px 24px 8px 24px; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
+                <div style='font-size:15px; color:#fff; margin-bottom:2px;'>Average Delay Percentage</div>
+                <div style='font-size:2.2em; font-weight:bold; color:#fff;'>{overall_avg:.2f}%</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    with col2:
+        st.markdown(
+            f"""
+            <div style='padding: 8px 24px 8px 24px; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
+                <div style='font-size:15px; color:#fff; margin-bottom:2px;'>Highest Delay Percentage State</div>
+                <div style='font-size:1.2em; font-weight:bold; color:#d62728;'>{highest_state_row['airport_state_full']} ({highest_state_row['airport_state']})</div>
+                <div style='font-size:1.2em; color:#d62728;'>{highest_state_row['arr_del15_percentage']:.2f}%</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    with col3:
+        st.markdown(
+            f"""
+            <div style='padding: 8px 24px 8px 24px; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
+                <div style='font-size:15px; color:#fff; margin-bottom:2px;'>Lowest Delay Percentage State</div>
+                <div style='font-size:1.2em; font-weight:bold; color:#2ca02c;'>{lowest_state_row['airport_state_full']} ({lowest_state_row['airport_state']})</div>
+                <div style='font-size:1.2em; color:#2ca02c;'>{lowest_state_row['arr_del15_percentage']:.2f}%</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
     st.write("")
 
