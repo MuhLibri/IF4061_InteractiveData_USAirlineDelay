@@ -6,7 +6,7 @@ import streamlit as st
 from src.utils import get_airline_year, format_with_dots  # Ensure this is imported from utils
 
 def delay_cause_stacked_bar(df, selected_years):
-    st.markdown("<h2 style='font-size: 24px;'>Flight Delays Trend by Cause</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='font-size: 24px;'>Yearly Breakdown of Flight Delay Causes</h2>", unsafe_allow_html=True)
 
     delay_causes = [
         ("carrier_ct", "Carrier", "#636EFA"),
