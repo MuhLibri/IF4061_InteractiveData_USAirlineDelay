@@ -122,7 +122,7 @@ def delay_cause_proportion(df, selected_years):
 
     fig.update_layout(
         margin=dict(t=0, b=20, l=0, r=0),  # Increase top margin for legend space
-        height=320,
+        height=350,
         legend=dict(
             orientation="h", 
             yanchor="bottom",
