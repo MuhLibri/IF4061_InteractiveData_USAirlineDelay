@@ -72,9 +72,7 @@ def state_delay_trend_and_cause(df, selected_years):
         color='state_full',
         color_discrete_sequence=line_colors,
         markers=True,
-        labels={
-            'delay_pct': 'Percentage of Flight Delays (%)',
-        },
+        labels={'delay_pct': 'Percentage of Flight Delays (%)', 'airline_year': 'Year', 'state_full': 'State'},
         height=350,
         category_orders={'airline_year': year_order}
     )
