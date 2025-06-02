@@ -3,6 +3,7 @@ import pandas as pd
 import warnings
 import os
 from src.average_state_delay import average_state_delay, load_and_prepare_data
+from src.state_delay_trend import state_delay_trend_and_cause
 
 # Set page config
 st.set_page_config(page_title="U.S. Flight Delay Analysis (2013-2023)", layout="wide")
@@ -50,7 +51,11 @@ selected_years = valid_years[start_index:end_index + 1]
 st.write(f"Selected Years: {selected_years[0]} to {selected_years[-1]}")
 
 st.write("")
+
+# === Average State Delay ===
+average_state_delay(df, selected_years)
+
 st.write("")
 
-## Graph 4: Daftar Rata-rata Keterlambatan penerbangan per maskapai
-average_state_delay = average_state_delay(df, selected_years)
+# === NEW: Trend & Stacked Bar for 2 States ===
+state_delay_trend_and_cause(df, selected_years)
