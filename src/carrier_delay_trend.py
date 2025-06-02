@@ -44,12 +44,29 @@ def carrier_delay_trend_and_cause(df, selected_years):
         f"<span style='font-size: 20px;'>({year_range})</span></h2>",
         unsafe_allow_html=True
     )
+
+    # Check if data is available for the selected carriers
+    year_order = sorted(carrier_year['airline_year'].unique(), key=lambda x: int(x.split('/')[0]))
+
+    # Convert 'airline_year' to a categorical type with ordered categories
+    carrier_year['airline_year'] = pd.Categorical(
+        carrier_year['airline_year'],
+        categories=year_order,
+        ordered=True
+    )
+
+    # Sort by 'airline_year' to ensure correct plotting order
+    carrier_year = carrier_year.sort_values('airline_year')
+
     # Line chart
+    # Assign custom colors for the two selected carriers
+    line_colors = ["#2A78C3", "#F5F9FF"]  # Example: blue and red, adjust as needed
     fig = px.line(
         carrier_year[carrier_year['carrier_name'].isin(carriers)],
         x='airline_year',
         y='delay_pct',
         color='carrier_name',
+        color_discrete_sequence=line_colors,
         markers=True,
         labels={'delay_pct': 'Percentage of Flight Delays (%)', 'airline_year': 'Year', 'carrier_name': 'Carrier'},
         height=350
