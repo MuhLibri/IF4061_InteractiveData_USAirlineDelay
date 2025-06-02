@@ -42,6 +42,7 @@ def delay_cause_proportion(df, selected_years):
         ('security_ct', 'Security', '#AB63FA'),
         ('late_aircraft_ct', 'Late Aircraft', '#FFA15A'),
     ]
+    st.write("")
 
     # --- Horizontal Stacked Bar (Most Recent Year Only) ---
     bar_fig = go.Figure()
@@ -69,7 +70,7 @@ def delay_cause_proportion(df, selected_years):
         title=dict(text=f"Delay Cause Proportions for Latest Year ({latest_airline_year})", font=dict(size=12)),
         xaxis=dict(title='Percentage', range=[0, 100], ticksuffix='%'),
         yaxis=dict(title=''),
-        height=121,
+        height=150,
         showlegend=False,
         margin=dict(t=20, l=20, r=20, b=0),
     )
@@ -121,7 +122,7 @@ def delay_cause_proportion(df, selected_years):
 
     fig.update_layout(
         margin=dict(t=0, b=20, l=0, r=0),  # Increase top margin for legend space
-        height=330,
+        height=320,
         legend=dict(
             orientation="h", 
             yanchor="bottom",

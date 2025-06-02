@@ -58,7 +58,6 @@ selected_years = valid_years[start_index:end_index + 1]
 st.write(f"Selected Years: {selected_years[0]} to {selected_years[-1]}")
 
 st.write("")
-st.write("")
 
 # -----------------------------------------------------------------------------------------------------
 col1, col2 = st.columns(2)

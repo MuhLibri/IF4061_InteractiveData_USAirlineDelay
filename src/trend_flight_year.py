@@ -45,12 +45,25 @@ def trend_flight_year(df, selected_years):
 
     # Extract last year for labeling
     recent_label_year = recent_year['airline_year'].split('/')[-1]
+    previous_label_year = previous_year['airline_year'].split('/')[-1]
     
     # Calculate delta (gain/loss) from previous year
     previous_year = merged_df.iloc[-2]
     delta_percentage = recent_year['percentage'] - previous_year['percentage']
     delta_delay = recent_year['total_delay'] - previous_year['total_delay']
     delta_flights = recent_year['total_flights'] - previous_year['total_flights']
+
+    st.markdown(
+        f"""
+        <div style='
+        '>
+            <h2 style='font-size: 12px; font-weight: bold;'>
+                Delay Overview for Latest Year ({previous_label_year}/{recent_label_year})
+            </h2>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
     
     # === Top Metrics ===
     col1, col2, col3 = st.columns(3)
