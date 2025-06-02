@@ -72,7 +72,7 @@ def delay_cause_proportion(df, selected_years):
         yaxis=dict(title=''),
         height=150,
         showlegend=False,
-        margin=dict(t=20, l=20, r=20, b=0),
+        margin=dict(t=30, l=20, r=20, b=0),
     )
 
     st.plotly_chart(bar_fig, use_container_width=True)

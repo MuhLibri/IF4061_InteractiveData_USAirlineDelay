@@ -79,10 +79,10 @@ def trend_flight_year(df, selected_years):
     with col1:
         st.markdown(
             f"""
-            <div style='padding: 0px 12px 0px 0px; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
-                <div style='font-size:15px; color:#fff; margin-bottom:4px;'>Percentage of Flight Delays ({recent_label_year})</div>
-                <div style='font-size:2.2em; font-weight:bold; color:#fff;'>{recent_year['percentage']:.2f}%</div>
-                <div style='font-size:1em; color:{delta_color}; font-weight:600;'>{arrow} {abs(delta_percentage):.2f}% from previous year</div>
+            <div style='padding: 0px 12px 3px 0px; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
+                <div style='font-size:15px; color:#fff; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;'>Percentage of Flight Delays ({recent_label_year})</div>
+                <div style='font-size:2.2em; font-weight:bold; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;'>{recent_year['percentage']:.2f}%</div>
+                <div style='font-size:14px; color:{delta_color}; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;'>{arrow} {abs(delta_percentage):.2f}% from previous year</div>
             </div>
             """,
             unsafe_allow_html=True
@@ -91,10 +91,10 @@ def trend_flight_year(df, selected_years):
     with col2:
         st.markdown(
             f"""
-            <div style='padding: 0px 12px 0px 8px; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
-                <div style='font-size:15px; color:#fff; margin-bottom:4px;'>Total Flight Delays ({recent_label_year})</div>
-                <div style='font-size:2.2em; font-weight:bold; color:#fff;'>{format_with_dots(recent_year['total_delay'])}</div>
-                <div style='font-size:1em; color:#aaa;'>+{format_with_dots(delta_delay)} from previous year</div>
+            <div style='padding: 0px 12px 3px 8px; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
+                <div style='font-size:15px; color:#fff; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;'>Total Flight Delays ({recent_label_year})</div>
+                <div style='font-size:2.2em; font-weight:bold; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;'>{format_with_dots(recent_year['total_delay'])}</div>
+                <div style='font-size:14px; color:#aaa; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;'>+{format_with_dots(delta_delay)} from previous year</div>
             </div>
             """,
             unsafe_allow_html=True
@@ -103,10 +103,10 @@ def trend_flight_year(df, selected_years):
     with col3:
         st.markdown(
             f"""
-            <div style='padding: 0px 0px 0px 8px; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
-                <div style='font-size:15px; color:#fff; margin-bottom:4px;'>Total Overall Flights ({recent_label_year})</div>
-                <div style='font-size:2.2em; font-weight:bold; color:#fff;'>{format_with_dots(recent_year['total_flights'])}</div>
-                <div style='font-size:1em; color:#aaa;'>+{format_with_dots(delta_flights)} from previous year</div>
+            <div style='padding: 0px 0px 3px 8px; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
+                <div style='font-size:15px; color:#fff; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;'>Total Overall Flights ({recent_label_year})</div>
+                <div style='font-size:2.2em; font-weight:bold; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;'>{format_with_dots(recent_year['total_flights'])}</div>
+                <div style='font-size:14px; color:#aaa; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;'>+{format_with_dots(delta_flights)} from previous year</div>
             </div>
             """,
             unsafe_allow_html=True
