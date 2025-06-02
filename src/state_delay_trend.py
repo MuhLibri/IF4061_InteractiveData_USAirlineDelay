@@ -2,23 +2,28 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-from src.utils import format_with_dots, get_airline_year
+from src.utils import format_with_dots, get_airline_year, normalize_airline_year
+from src.state_utils import state_abbrev_to_name
 
 def state_delay_trend_and_cause(df, selected_years):
     # Siapkan data
     df = df.copy()
     df['airline_year'] = df.apply(get_airline_year, axis=1)
     df = df[df['airline_year'].isin(selected_years)]
-    
+
+    # Mapping full state name
+    df['state_full'] = df['airport_state'].map(state_abbrev_to_name)
+    df = df[df['state_full'].notnull()]  # Drop rows with unknown state
+
     # Hitung persentase delay per state per tahun
-    state_year = df.groupby(['airport_state', 'airline_year']).agg(
+    state_year = df.groupby(['state_full', 'airline_year']).agg(
         total_del15=('arr_del15', 'sum'),
         total_flights=('arr_flights', 'sum')
     ).reset_index()
     state_year['delay_pct'] = (state_year['total_del15'] / state_year['total_flights']) * 100
 
     # Ambil rata-rata delay untuk default selection
-    avg_delay = state_year.groupby('airport_state')['delay_pct'].mean().sort_values(ascending=False)
+    avg_delay = state_year.groupby('state_full')['delay_pct'].mean().sort_values(ascending=False)
     default_states = [avg_delay.index[0], avg_delay.index[-1]] if len(avg_delay) > 1 else avg_delay.index.tolist()
 
     # Pilihan state
@@ -41,14 +46,6 @@ def state_delay_trend_and_cause(df, selected_years):
         unsafe_allow_html=True
     )
 
-    # Normalisasi tahun jadi 4 digit di awal jika perlu
-    def normalize_airline_year(year_str):
-        parts = year_str.split('/')
-        first = parts[0]
-        if len(first) == 2:
-            first = '20' + first  # misalnya '22' jadi '2022'
-        return f"{first}/{parts[1]}"
-
     state_year['airline_year'] = state_year['airline_year'].apply(normalize_airline_year)
 
     # Urutkan tahun
@@ -61,13 +58,12 @@ def state_delay_trend_and_cause(df, selected_years):
     state_year = state_year.sort_values('airline_year')
 
     # Subset dan pastikan airline_year tetap kategori terurut
-    filtered_state_year = state_year[state_year['airport_state'].isin(states)].copy()
+    filtered_state_year = state_year[state_year['state_full'].isin(states)].copy()
     filtered_state_year['airline_year'] = pd.Categorical(
         filtered_state_year['airline_year'],
         categories=year_order,
         ordered=True
     )
-
 
     # Line chart
     line_colors = ["#2A78C3", "#F5F9FF"]
@@ -75,13 +71,13 @@ def state_delay_trend_and_cause(df, selected_years):
         filtered_state_year,
         x='airline_year',
         y='delay_pct',
-        color='airport_state',
+        color='state_full',
         color_discrete_sequence=line_colors,
         markers=True,
         labels={
             'delay_pct': 'Percentage of Flight Delays (%)',
             'airline_year': 'Year',
-            'airport_state': 'State'
+            'state_full': 'State'
         },
         height=350,
         category_orders={'airline_year': year_order}
@@ -96,15 +92,13 @@ def state_delay_trend_and_cause(df, selected_years):
     )
     fig.update_layout(margin=dict(t=20, b=40, l=40, r=20))
     st.plotly_chart(fig, use_container_width=True)
-    print(filtered_state_year['airline_year'].unique())
-    print(filtered_state_year['airline_year'].dtype)
 
     st.write("")
 
     # Stacked bar untuk masing-masing state
     colA, colB = st.columns(2)
     for idx, state in enumerate(states):
-        sdf = df[df['airport_state'] == state]
+        sdf = df[df['state_full'] == state]
         if sdf.empty:
             (colA if idx == 0 else colB).warning(f'No data for {state}')
             continue

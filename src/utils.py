@@ -15,3 +15,11 @@ def get_two_month_span(idx, total_delay):
     if idx > 0:
         return f"{total_delay.loc[idx-1, 'month']}–{total_delay.loc[idx, 'month']}"
     return total_delay.loc[idx, 'month']  # Fallback for the first row
+
+# Normalisasi tahun jadi 4 digit di awal jika perlu
+def normalize_airline_year(year_str):
+    parts = year_str.split('/')
+    first = parts[0]
+    if len(first) == 2:
+        first = '20' + first  # misalnya '22' jadi '2022'
+    return f"{first}/{parts[1]}"
