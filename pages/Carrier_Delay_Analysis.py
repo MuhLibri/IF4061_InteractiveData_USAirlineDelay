@@ -37,7 +37,7 @@ st.markdown("<h2 style='font-size: 16px;'>Select Year Range (based on end year)<
 
 # Slider from 2014 to 2023 (which maps to indices 0 to 9 of valid_years)
 selected_years_int = st.slider(
-    "",
+    "Enter range here",
     min_value=2014,
     max_value=2023,
     value=(2014, 2023),
