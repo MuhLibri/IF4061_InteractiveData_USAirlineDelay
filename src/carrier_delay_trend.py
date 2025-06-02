@@ -114,16 +114,15 @@ def carrier_delay_trend_and_cause(df, selected_years):
             barmode='stack',
             xaxis=dict(title="Year", tickangle=45),
             yaxis=dict(title="Percentage of Flight Delays (%)"),
-            height=400,
-            margin=dict(t=60, b=40, l=40, r=40),
+            height=500,
+            margin=dict(t=0, b=0, l=0, r=20),
             showlegend=True,
             legend=dict(
                 orientation="h",
                 yanchor="bottom",
-                y=1.12,
-                xanchor="right",
-                x=0.58,
-                font=dict(size=13)
+                y=1.05,
+                xanchor="center",
+                x=0.465,
             )
         )
         fig2.update_annotations(font_size=16)
