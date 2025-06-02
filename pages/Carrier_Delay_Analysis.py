@@ -3,6 +3,7 @@ import pandas as pd
 import warnings
 import os
 from src.average_carrier_delay import average_carrier_delay, load_and_prepare_data
+from src.carrier_delay_trend import carrier_delay_trend_and_cause
 
 # Set page config
 st.set_page_config(page_title="U.S. Flight Delay Analysis (2013-2023)", layout="wide")
@@ -51,5 +52,10 @@ st.write(f"Selected Years: {selected_years[0]} to {selected_years[-1]}")
 
 st.write("")
 
-## Graph 4: Daftar Rata-rata Keterlambatan penerbangan per maskapai
+# === Average Carrier Delay ===
 average_carrier_delay(df, selected_years)
+
+st.write("")
+
+# === NEW: Trend & Stacked Bar for 2 Carriers ===
+carrier_delay_trend_and_cause(df, selected_years)
