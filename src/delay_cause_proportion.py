@@ -66,7 +66,7 @@ def delay_cause_proportion(df, selected_years):
 
     bar_fig.update_layout(
         barmode='stack',
-        title=dict(text=f"Delay Cause Proportions for {latest_airline_year}", font=dict(size=12)),
+        title=dict(text=f"Delay Cause Proportions for Latest Year ({latest_airline_year})", font=dict(size=12)),
         xaxis=dict(title='Percentage', range=[0, 100], ticksuffix='%'),
         yaxis=dict(title=''),
         height=121,
@@ -123,11 +123,11 @@ def delay_cause_proportion(df, selected_years):
         margin=dict(t=0, b=20, l=0, r=0),  # Increase top margin for legend space
         height=330,
         legend=dict(
-            orientation="h",         # Horizontal layout
+            orientation="h", 
             yanchor="bottom",
-            y=1.05,                  # Slightly above the chart
+            y=1.05,
             xanchor="center",
-            x=0.5                    # Centered horizontally
+            x=0.5
         )
     )
 

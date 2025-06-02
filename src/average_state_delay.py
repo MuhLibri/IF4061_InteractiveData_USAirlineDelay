@@ -71,11 +71,10 @@ def load_and_prepare_data(path):
 
 def average_state_delay(df, selected_years):
     year_range = f"{selected_years[0]}" if selected_years[0] == selected_years[-1] else f"{selected_years[0]} - {selected_years[-1]}"
-    st.markdown(f"<h2 style='font-size: 24px;'>List of Average Flight Delays by States<br><span style='font-size: 20px;'>({year_range})</span></h2>", unsafe_allow_html=True)
 
     # Filter berdasarkan tahun
     filtered_df = filter_data_by_year(df, selected_years)
-
+    
     # Hitung rata-rata keterlambatan per state
     state_delay = compute_state_avg_delay(filtered_df)
 
@@ -93,7 +92,7 @@ def average_state_delay(df, selected_years):
     with col1:
         st.markdown(
             f"""
-            <div style='padding: 8px 24px 8px 24px; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
+            <div style='padding: 0 24px 8px 0; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
                 <div style='font-size:15px; color:#fff; margin-bottom:2px;'>Average Delay Percentage</div>
                 <div style='font-size:2.2em; font-weight:bold; color:#fff;'>{overall_avg:.2f}%</div>
             </div>
@@ -103,7 +102,7 @@ def average_state_delay(df, selected_years):
     with col2:
         st.markdown(
             f"""
-            <div style='padding: 8px 24px 8px 24px; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
+            <div style='padding: 0 24px 8px 0; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
                 <div style='font-size:15px; color:#fff; margin-bottom:2px;'>Highest Delay Percentage State</div>
                 <div style='font-size:1.2em; font-weight:bold; color:#d62728;'>{highest_state_row['airport_state_full']} ({highest_state_row['airport_state']})</div>
                 <div style='font-size:1.2em; color:#d62728;'>{highest_state_row['arr_del15_percentage']:.2f}%</div>
@@ -114,7 +113,7 @@ def average_state_delay(df, selected_years):
     with col3:
         st.markdown(
             f"""
-            <div style='padding: 8px 24px 8px 24px; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
+            <div style='padding: 0 24px 8px 0; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
                 <div style='font-size:15px; color:#fff; margin-bottom:2px;'>Lowest Delay Percentage State</div>
                 <div style='font-size:1.2em; font-weight:bold; color:#2ca02c;'>{lowest_state_row['airport_state_full']} ({lowest_state_row['airport_state']})</div>
                 <div style='font-size:1.2em; color:#2ca02c;'>{lowest_state_row['arr_del15_percentage']:.2f}%</div>
@@ -123,7 +122,7 @@ def average_state_delay(df, selected_years):
             unsafe_allow_html=True
         )
 
-    st.write("")
+    st.markdown(f"<h2 style='font-size: 24px;'>List of Average Flight Delays by States<br><span style='font-size: 20px;'>({year_range})</span></h2>", unsafe_allow_html=True)
 
     # Buat visualisasi choropleth
     choropleth = go.Choropleth(

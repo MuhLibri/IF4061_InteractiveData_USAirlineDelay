@@ -61,7 +61,7 @@ def delay_cause_stacked_bar(df, selected_years):
         barmode='stack',
         xaxis=dict(title="Year", tickangle=45),
         yaxis=dict(title="Percentage of Flight Delays (%)"),
-        height=500,
+        height=600,
         margin=dict(t=60, b=40, l=40, r=40),
         showlegend=True,
         legend=dict(

@@ -54,27 +54,50 @@ def trend_flight_year(df, selected_years):
     
     # === Top Metrics ===
     col1, col2, col3 = st.columns(3)
-    st.markdown(
-        """
-    <style>
-    [data-testid="stMetricValue"] {
-        font-size: 32px;
-    }
-    [data-testid="stMetricDelta"] {
-        font-size: 12px;
-    }
-    </style>
-    """,
-        unsafe_allow_html=True,
-    )
-    col1.metric(
-        f"Percentage of Flight Delays ({recent_label_year})",
-        f"{recent_year['percentage']:.2f}%",
-        f"{delta_percentage:.2f}% from previous year",
-        delta_color="inverse"
-    )
-    col2.metric(f"Total Flight Delays ({recent_label_year})", format_with_dots(recent_year['total_delay']), format_with_dots(delta_delay) + " from previous year", delta_color="inverse")
-    col3.metric(f"Total Overall Flights ({recent_label_year})", format_with_dots(recent_year['total_flights']), format_with_dots(delta_flights) + " from previous year")
+
+    # Determine arrow and color for percentage delta
+    if delta_percentage > 0:
+        arrow = "▲"
+        delta_color = "#d62728"  # red
+    else:
+        arrow = "▼"
+        delta_color = "#2ca02c"  # green
+
+    with col1:
+        st.markdown(
+            f"""
+            <div style='padding: 0px 12px 0px 0px; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
+                <div style='font-size:15px; color:#fff; margin-bottom:4px;'>Percentage of Flight Delays ({recent_label_year})</div>
+                <div style='font-size:2.2em; font-weight:bold; color:#fff;'>{recent_year['percentage']:.2f}%</div>
+                <div style='font-size:1em; color:{delta_color}; font-weight:600;'>{arrow} {abs(delta_percentage):.2f}% from previous year</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col2:
+        st.markdown(
+            f"""
+            <div style='padding: 0px 12px 0px 8px; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
+                <div style='font-size:15px; color:#fff; margin-bottom:4px;'>Total Flight Delays ({recent_label_year})</div>
+                <div style='font-size:2.2em; font-weight:bold; color:#fff;'>{format_with_dots(recent_year['total_delay'])}</div>
+                <div style='font-size:1em; color:#aaa;'>+{format_with_dots(delta_delay)} from previous year</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col3:
+        st.markdown(
+            f"""
+            <div style='padding: 0px 0px 0px 8px; margin-bottom:8px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start;'>
+                <div style='font-size:15px; color:#fff; margin-bottom:4px;'>Total Overall Flights ({recent_label_year})</div>
+                <div style='font-size:2.2em; font-weight:bold; color:#fff;'>{format_with_dots(recent_year['total_flights'])}</div>
+                <div style='font-size:1em; color:#aaa;'>+{format_with_dots(delta_flights)} from previous year</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
     
     st.write("")
     
