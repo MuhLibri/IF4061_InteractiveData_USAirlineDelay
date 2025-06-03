@@ -34,13 +34,13 @@
 * [Acknowledgements](#acknowledgements)
 
 ## Description
-Tugas Visualisasi Data Statik ini membahas seputar analisis data terkait dengan kondisi kedatangan (arrival) dan penundaan (delay) yang terjadi di Amerika Serikat dalam kurun waktu 10 tahun mulai dari Agustus 2013 hingga Agustus 2023.<br><br>
+Tugas Visualisasi Data Statik ini membahas seputar analisis data terkait dengan kondisi kedatangan (arrival) dan penundaan (delay) yang terjadi di Amerika Serikat dalam kurun waktu 10 tahun mulai dari Agustus 2013 hingga Agustus 2023.
 
 ## Dataset References
 https://www.kaggle.com/datasets/sriharshaeedala/airline-delay
 
 ## Dashboard Website
-us-flight-delay-1323-dashboard-analysis.streamlit.app
+https://us-flight-delay-1323-dashboard-analysis.streamlit.app
 
 ## Requirements
 1. Visual Studio Code
