@@ -40,7 +40,7 @@ Tugas Visualisasi Data Statik ini membahas seputar analisis data terkait dengan 
 https://www.kaggle.com/datasets/sriharshaeedala/airline-delay
 
 ## Dashboard Website
-ADDED LATER
+us-flight-delay-1323-dashboard-analysis.streamlit.app
 
 ## Requirements
 1. Visual Studio Code
