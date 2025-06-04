@@ -68,6 +68,9 @@ Langkah-langkah proses setup program adalah sebagai berikut:
 2. Membuka file .ipynb yang terdapat pada program
 3. Menjalankan file .ipynb dengan virtual environment run ataupun dengan Jupyter Notebook
 
+## Demo Video
+Link: https://drive.google.com/file/d/1hoe5Kbd9YEuXOOGx8mvqjYtCqI2HHpJh/view?usp=sharing
+
 ## Acknowledgements
 - Tuhan Yang Maha Esa
 - Bu Dessi Puji Lestari dan Bu Lenny Putri Yulianti sebagai Dosen IF4061 Visualisasi Data
