@@ -32,6 +32,7 @@
 * [Dashboard Website](#dashboard-website)
 * [Requirements](#requirements)
 * [Cara Menjalankan Program](#cara-menjalankan-program)
+* [Demo Video](#demo-video)
 * [Acknowledgements](#acknowledgements)
 
 ## Description
